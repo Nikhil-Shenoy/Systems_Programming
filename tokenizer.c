@@ -71,7 +71,7 @@ char *TKGetNextToken(TokenizerT *tk) {
 /*
 converts a hex string to its hexadecimal string representation
 */
-char * convertToHex(char * str) {
+char * convertEscapeToHex(char * str) {
 	if (strcmp(str, "\n") == 0) {
 		return "0x0a";
 	} else if (strcmp(str, "\t") == 0) {
@@ -93,6 +93,9 @@ char * convertToHex(char * str) {
 	} else {
 
 	}
+}
+int isEscapeString (char * str) {
+	
 }
 
 
