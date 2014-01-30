@@ -70,6 +70,7 @@ char *TKGetNextToken(TokenizerT *tk) {
 
 /*
 converts a hex string to its hexadecimal string representation
+returns "" if it cannot find a match
 */
 char * convertEscapeToHex(char * str) {
 	if (strcmp(str, "\n") == 0) {
@@ -91,11 +92,36 @@ char * convertEscapeToHex(char * str) {
 	} else if (strcmp(str, "\"") == 0) {
 		return "0x22";
 	} else {
-
+		return "";
 	}
 }
+
+/*
+returns 1 if given string is an escapestring, 
+returns 0 if not escape string
+*/
 int isEscapeString (char * str) {
-	
+	if (strcmp(str, "\n") == 0) {
+		return 1;
+	} else if (strcmp(str, "\t") == 0) {
+		return 1;
+	} else if (strcmp(str, "\v") == 0) {
+		return 1;
+	} else if (strcmp(str, "\b") == 0) {
+		return 1;
+	} else if (strcmp(str, "\r") == 0) {
+		return 1;
+	} else if (strcmp(str, "\f") == 0) {
+		return 1;
+	} else if (strcmp(str, "\a") == 0) {
+		return 1;
+	} else if (strcmp(str, "\\") == 0) {
+		return 1;
+	} else if (strcmp(str, "\"") == 0) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 
