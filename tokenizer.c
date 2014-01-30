@@ -68,30 +68,33 @@ char *TKGetNextToken(TokenizerT *tk) {
  * Each token should be printed on a separate line.
  */
 
-
+/*
+converts a hex string to its hexadecimal string representation
+*/
 char * convertToHex(char * str) {
 	if (strcmp(str, "\n") == 0) {
-
-	} else if (strcmp(str, "\n") == 0) {
-		
-	} else if (strcmp(str, "\n") == 0) {
-		
-	} else if (strcmp(str, "\n") == 0) {
-
-	} else if (strcmp(str, "\n") == 0) {
-		
-	} else if (strcmp(str, "\n") == 0) {
-		
-	} else if (strcmp(str, "\n") == 0) {
-
-	} else if (strcmp(str, "\n") == 0) {
-		
-	} else if (strcmp(str, "\n") == 0) {
-		
+		return "0x0a";
+	} else if (strcmp(str, "\t") == 0) {
+		return "0x09";
+	} else if (strcmp(str, "\v") == 0) {
+		return "0x0b";
+	} else if (strcmp(str, "\b") == 0) {
+		return "0x08";
+	} else if (strcmp(str, "\r") == 0) {
+		return "0x0d";
+	} else if (strcmp(str, "\f") == 0) {
+		return "0x0c";
+	} else if (strcmp(str, "\a") == 0) {
+		return "0x07";
+	} else if (strcmp(str, "\\") == 0) {
+		return "0x5c";
+	} else if (strcmp(str, "\"") == 0) {
+		return "0x22";
 	} else {
-		
+
 	}
 }
+
 
 
 int main(int argc, char **argv) {
