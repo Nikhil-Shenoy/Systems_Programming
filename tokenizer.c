@@ -28,9 +28,6 @@ char *TKGetNextToken(TokenizerT *tk);
 char * convertCharToHex(char str);
 char * unescapeString(char * str);
 int TKCharIsDelim(TokenizerT *tk, char c);
-int TKNextStringPart(TokenizerT *tk, int index, int lookingForDelim);
-int TKNextTokenIndex(TokenizerT *tk);
-int TKFirstNonTokenChar(TokenizerT *tk, int index);
 
 
 /*
@@ -73,32 +70,6 @@ void TKDestroy(TokenizerT *tk) {
 	
 	free(tk);
 	tk = 0;
-}
-
-
-int TKNextStringPart(TokenizerT *tk, int index, int lookingForDelim) {
-	char * str = tk->input;
-	int len = strlen(str);
-	int i;
-	for(i=index; i<len; i++) {
-		char c = str[i];
-		int found;
-		if (lookingForDelim) {
-			found = TKCharIsDelim(tk, c);
-		} else {
-			found = !TKCharIsDelim(tk, c);
-		}
-		if (found) {
-			return i;
-		}
-	}
-	return -1;
-}
-int TKNextTokenIndex(TokenizerT *tk) {
-	return TKNextStringPart(tk, tk->index, 1);
-}
-int TKFirstNonTokenChar(TokenizerT *tk, int index) {
-	return TKNextStringPart(tk, index, 0);
 }
 
 /*
@@ -192,34 +163,8 @@ char * escapeStringWithHex(char * str) {
  * You need to fill in this function as part of your implementation.
  */
 char *TKGetNextToken(TokenizerT *tk) {
-	char * str = tk->input;
-	int len = strlen(str);
-	
-	//updates the index for beginning of function
-	//ensures that leading delims will not be printed
-	tk->index = TKFirstNonTokenChar(tk, tk->index);
-	int start_index = tk->index;
-
-	//provides for the case where index is beyond bounds of the string
-	if (start_index < 0 || start_index >= len) {
-		return NULL;
-	}
-	int end_index = TKNextTokenIndex(tk);
-	if (end_index == -1) {
-		end_index = len;
-	}
-	//update index for next call
-	tk->index = end_index;
-	
-	int new_len = (end_index - start_index);
-	char * token = calloc(sizeof(char), new_len + 1); //+1 for null byte
-	DEBUG_PRINTLN_F("%d, %d", start_index, end_index);
-	strncpy(token, str + start_index, new_len);
-	token[new_len] = '\0';
-
+	char * token = "Hello World";
 	char * escaped_token = escapeStringWithHex(token);
-	free(token);
-
 	return escaped_token;
 }
 
