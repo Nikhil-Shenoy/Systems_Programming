@@ -1,4 +1,4 @@
-COMPILER = gcc -Wall -pedantic
+COMPILER = gcc -Wall -pedantic -Wno-variadic-macros
 
 tokenizer.o: tokenizer.c
 	$(COMPILER) -c tokenizer.c

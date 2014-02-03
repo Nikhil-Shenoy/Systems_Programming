@@ -2,9 +2,9 @@
  * tokenizer.c
  */
 
-//#define DEBUG_ON
+/*#define DEBUG_ON*/
 
-//#include "tokenizer.h"
+/*#include "tokenizer.h"*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,7 +46,7 @@ int TKFirstNonTokenChar(TokenizerT *tk, int index);
  *
  * You need to fill in this function as part of your implementation.
  */
-//DONE
+/*DONE*/
 TokenizerT *TKCreate(char *separators, char *ts) {
 	TokenizerT * tokenizer = malloc(sizeof(TokenizerT));
 	tokenizer->index = 0;
@@ -61,7 +61,7 @@ TokenizerT *TKCreate(char *separators, char *ts) {
  *
  * You need to fill in this function as part of your implementation.
  */
-//DONE
+/*DONE*/
 void TKDestroy(TokenizerT *tk) {
 	tk->index = 0;
 	
@@ -121,14 +121,13 @@ int charIsEscapeChar(char c) {
 	char * delim = "\n\t\v\b\r\f\a\\\"";
 	return charIsInSet(c, delim);
 }
-
 /*
  * converts a char to its hexadecimal string representation
  * returns a char * that needs to be freed
  */
-//DONE
+/*DONE*/
 char * convertCharToHex(char str) {
-	//"[0x00]"
+	/*"[0x00]"*/
 	int i = str;
 	int len = 6;
 	char * hex = calloc(sizeof(char), len+1);
@@ -138,7 +137,9 @@ char * convertCharToHex(char str) {
 }
 
 char * escapeStringWithHex(char * str) {
-	//first, find out the lenghth the new string
+	/*first, find out the lenghth the new string*/
+	char *new_str;
+	int adj_i;
 	int len = strlen(str);
 	int new_len = len;
 	int num_delim = 0;
@@ -156,11 +157,14 @@ char * escapeStringWithHex(char * str) {
 
 	DEBUG_PRINTLN_F("new length = %d", new_len);
 
-	char * new_str = calloc(sizeof(char), new_len+1);
+
+	new_str = calloc(sizeof(char), new_len+1);
 	new_str[new_len] = '\0';
 
-	int adj_i = 0;
-	for (int i = 0; i < len; ++i) {
+
+	adj_i = 0;
+
+	for (i = 0; i < len; ++i) {
 		char c = str[i];
 		DEBUG_PRINTLN_F("i = %d", i);
 		if (charIsEscapeChar(c)) {
@@ -194,30 +198,36 @@ char * escapeStringWithHex(char * str) {
 char *TKGetNextToken(TokenizerT *tk) {
 	char * str = tk->input;
 	int len = strlen(str);
-	
-	//updates the index for beginning of function
-	//ensures that leading delims will not be printed
-	tk->index = TKFirstNonTokenChar(tk, tk->index);
-	int start_index = tk->index;
 
-	//provides for the case where index is beyond bounds of the string
+	int start_index;
+	int end_index;
+	int new_len;
+	char *token;
+	char *escaped_token;
+	
+	/*updates the index for beginning of function*/
+	/*ensures that leading delims will not be printed*/
+	tk->index = TKFirstNonTokenChar(tk, tk->index);
+	start_index = tk->index;
+
+	/*provides for the case where index is beyond bounds of the string*/
 	if (start_index < 0 || start_index >= len) {
 		return NULL;
 	}
-	int end_index = TKNextTokenIndex(tk);
+	end_index = TKNextTokenIndex(tk);
 	if (end_index == -1) {
 		end_index = len;
 	}
-	//update index for next call
+	/*update index for next call*/
 	tk->index = end_index;
 	
-	int new_len = (end_index - start_index);
-	char * token = calloc(sizeof(char), new_len + 1); //+1 for null byte
+	new_len = (end_index - start_index);
+	token = calloc(sizeof(char), new_len + 1); /*+1 for null byte*/
 	DEBUG_PRINTLN_F("%d, %d", start_index, end_index);
 	strncpy(token, str + start_index, new_len);
 	token[new_len] = '\0';
 
-	char * escaped_token = escapeStringWithHex(token);
+	escaped_token = escapeStringWithHex(token);
 	free(token);
 
 	return escaped_token;
@@ -227,18 +237,21 @@ char *TKGetNextToken(TokenizerT *tk) {
  * This function converts "\*" to '\*' where the first is a string of 2 char 
  * and the second is 1 character.
  */
-//DONE
+/*DONE*/
 char * unescapeString(char * str) {
+	int i;
+	char next;
+	char *new_buffer;
 	int new_len = 0;
 	int len = strlen(str);
 	char * buffer = calloc(sizeof(char), len+1);
 	buffer[len]='\0';
-	int i;
+
 	for (i=0; i<len; i++) {
 		char curr = str[i];
 		if (curr == '\\') {
 			i++;
-			char next = str[i];
+			next = str[i];
 			switch(next) {
 				case 'n' : 
 					curr = '\n';
@@ -262,23 +275,42 @@ char * unescapeString(char * str) {
 					curr = '\a';
 					break;
 				case '\\' :
-					i--;
+				
+					/*i--;*/
 					curr = '\\';
 					break;
 				case '\0':
+
 					curr = '\\';
 					break;
 				default:
-					i--;
-					curr = '\\';
+				{
+					curr = next;	
+					/*int j;*/
+
+					/*i--;*/
+					/*curr = '\0';*/
+					
+/*					printf("Initial string: %s\n",str);*/
+					
+					/*
+					for(j = i; j < len; j++)
+					{
+						str[j] = str[j+1];
+					}
+					*/	
+/*					printf("Final String: %s\n\n",str);	*/
+					
 					break;
+					
+				}
 			}
 
 		}
 		buffer[new_len] = curr;
 		new_len++;
 	}
-	char * new_buffer = calloc(sizeof(char), new_len+1);
+	new_buffer = calloc(sizeof(char), new_len+1);
 	strncpy ( new_buffer, buffer, new_len );
 	free(buffer);
 	new_buffer[new_len]='\0';
@@ -294,17 +326,23 @@ char * unescapeString(char * str) {
  * Each token should be printed on a separate line.
  */
 int main(int argc, char **argv) {
+	TokenizerT *tk;	
+	char *token;
+
+
 	DEBUG_PRINTLN_F("%d", argc);
 	if (argc != 3) {
 		printf("%s\n", "** Invalid Arguments: `$ prog <delim> <string>`");
 		exit(1);
 	}
-	TokenizerT * tk = TKCreate(argv[1], argv[2]);
-	char * token = TKGetNextToken(tk);
+	tk = TKCreate(argv[1], argv[2]);
+	token = TKGetNextToken(tk);
 	while (token != NULL) {
 		printf("%s\n", token);
 		free(token);
 		token = TKGetNextToken(tk);
 	}
 	TKDestroy(tk);
+
+	return 0;
 }
