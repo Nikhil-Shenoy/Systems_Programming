@@ -4,7 +4,10 @@
 
 
 #define DEBUG_ON
-#include "tokenizer.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "debug.h"
 
 /*
  * Tokenizer type.  You need to fill in the type as part of your implementation.
@@ -14,6 +17,30 @@ struct TokenizerT_ {
 	char * input;
 	char * delim;
 };
+
+typedef struct TokenizerT_ TokenizerT;
+
+//Tokenizer functions
+TokenizerT *TKCreate(char *separators, char *ts);
+void TKDestroy(TokenizerT *tk);
+int TKNextStringPart(TokenizerT *tk, int index, int lookingForDelim);
+int TKNextTokenIndex(TokenizerT *tk);
+int TKFirstNonTokenChar(TokenizerT *tk, int index);
+char *TKGetNextToken(TokenizerT *tk);
+int TKCharIsDelim(TokenizerT *tk, char c);
+
+int charIsInSet(char c, char * set);
+int charIsEscapeChar(char c);
+
+//char operation functions
+char * convertCharToHex(char str);
+char * unescapeString(char * str);
+char * escapeStringWithHex(char * str);
+char * stingWithoutTrailingBackslash(char * str);
+
+//main function
+int main(int argc, char **argv);
+
 
 /*
  * TKCreate creates a new TokenizerT object for a given set of separator
@@ -32,7 +59,10 @@ TokenizerT *TKCreate(char *separators, char *ts) {
 	TokenizerT * tokenizer = malloc(sizeof(TokenizerT));
 	tokenizer->index = 0;
 	tokenizer->delim = unescapeString(separators);
-	tokenizer->input = unescapeString(ts);
+
+	char * modString = stingWithoutTrailingBackslash(ts);
+
+	tokenizer->input = unescapeString(modString);
 	return tokenizer;
 }
 
@@ -238,9 +268,9 @@ char * unescapeString(char * str) {
 	int len = strlen(str);
 
 	//to ignore backslashes at the end of a string
-	if (str[len-1] == '\\') {
-		len = len - 1;
-	}
+	// if (str[len-1] == '\\') {
+	// 	len = len - 1;
+	// }
 	char * buffer = calloc(sizeof(char), len+1);
 	buffer[len]='\0';
 
@@ -274,8 +304,8 @@ char * unescapeString(char * str) {
 				case '\\' :
 					curr = '\\';
 					break;
-				case '"' :
-					curr = '"';
+				case '\"' :
+					curr = '\"';
 					break;
 				
 				// case '\0': will never happen 
@@ -312,7 +342,7 @@ int main(int argc, char **argv) {
 
 	DEBUG_PRINTLN_F("%d", argc);
 	if (argc != 3) {
-		printf("%s\n", "** Invalid Arguments: `$ prog <delim> <string>`");
+		printf("%s\n", "** Invalid Arguments: `$ ./tokenizer <delim> <string>`");
 		exit(1);
 	}
 
