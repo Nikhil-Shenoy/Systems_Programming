@@ -1,4 +1,4 @@
-COMPILER = gcc -Wall -pedantic
+COMPILER = gcc -Wall -g -O
 
 all: tokenizer
 
@@ -8,6 +8,6 @@ tokenizer.o: tokenizer.c
 tokenizer: tokenizer.o
 	$(COMPILER) tokenizer.o -o tokenizer
 
-clean: tokenizer.o
+clean:
 	rm tokenizer.o
 	rm tokenizer
