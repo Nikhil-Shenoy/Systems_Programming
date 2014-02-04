@@ -2,14 +2,9 @@
  * tokenizer.c
  */
 
+
 #define DEBUG_ON
-
-/*#include "tokenizer.h"*/
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "debug.h"
-
+#include "tokenizer.h"
 
 /*
  * Tokenizer type.  You need to fill in the type as part of your implementation.
@@ -19,19 +14,6 @@ struct TokenizerT_ {
 	char * input;
 	char * delim;
 };
-
-typedef struct TokenizerT_ TokenizerT;
-
-TokenizerT *TKCreate(char *separators, char *ts);
-void TKDestroy(TokenizerT *tk);
-char *TKGetNextToken(TokenizerT *tk);
-char * convertCharToHex(char str);
-char * unescapeString(char * str,TokenizerT *tk);
-int TKCharIsDelim(TokenizerT *tk, char c);
-int TKNextStringPart(TokenizerT *tk, int index, int lookingForDelim);
-int TKNextTokenIndex(TokenizerT *tk);
-int TKFirstNonTokenChar(TokenizerT *tk, int index);
-
 
 /*
  * TKCreate creates a new TokenizerT object for a given set of separator
@@ -46,13 +28,11 @@ int TKFirstNonTokenChar(TokenizerT *tk, int index);
  *
  * You need to fill in this function as part of your implementation.
  */
-/*DONE*/
 TokenizerT *TKCreate(char *separators, char *ts) {
 	TokenizerT * tokenizer = malloc(sizeof(TokenizerT));
 	tokenizer->index = 0;
-	tokenizer->delim = unescapeString(separators,tokenizer);
-	tokenizer->input = unescapeString(ts,tokenizer);
-
+	tokenizer->delim = unescapeString(separators);
+	tokenizer->input = unescapeString(ts);
 	return tokenizer;
 }
 
@@ -62,7 +42,6 @@ TokenizerT *TKCreate(char *separators, char *ts) {
  *
  * You need to fill in this function as part of your implementation.
  */
-/*DONE*/
 void TKDestroy(TokenizerT *tk) {
 	tk->index = 0;
 	
@@ -126,7 +105,6 @@ int charIsEscapeChar(char c) {
  * converts a char to its hexadecimal string representation
  * returns a char * that needs to be freed
  */
-/*DONE*/
 char * convertCharToHex(char str) {
 	/*"[0x00]"*/
 	int i = str;
@@ -157,7 +135,6 @@ char * escapeStringWithHex(char * str) {
 	new_len += num_delim * extra_per_delim;
 
 	DEBUG_PRINTLN_F("new length = %d", new_len);
-
 
 	new_str = calloc(sizeof(char), new_len+1);
 	new_str[new_len] = '\0';
@@ -234,12 +211,26 @@ char *TKGetNextToken(TokenizerT *tk) {
 	return escaped_token;
 }
 
+char * stingWithoutTrailingBackslash(char * str) {
+	int len = strlen(str);
+	char *buffer;
+	//to ignore backslashes at the end of a string
+	if (str[len-1] == '\\') {
+		len = len - 1;
+	}
+	buffer = calloc(sizeof(char), len+1);
+	strncpy ( buffer, str, len);
+	buffer[len] = '\0';
+	return buffer;
+}
+
+
 /*
  * This function converts "\*" to '\*' where the first is a string of 2 char 
  * and the second is 1 character.
  */
 /*DONE*/
-char * unescapeString(char * str,TokenizerT *tk) {
+char * unescapeString(char * str) {
 	int i;
 	char next;
 	char *new_buffer;
@@ -329,6 +320,10 @@ int main(int argc, char **argv) {
 	DEBUG_PRINTLN_F("%s", unescapeString(argv[2]));
 
 	tk = TKCreate(argv[1], argv[2]);
+
+	DEBUG_PRINTLN_F("%s", tk->input);
+	DEBUG_PRINTLN_F("%s", tk->delim);
+
 	token = TKGetNextToken(tk);
 	while (token != NULL) {
 		printf("%s\n", token);
