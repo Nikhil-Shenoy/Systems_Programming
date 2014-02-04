@@ -2,7 +2,7 @@
  * tokenizer.c
  */
 
-/*#define DEBUG_ON*/
+#define DEBUG_ON
 
 /*#include "tokenizer.h"*/
 #include <stdio.h>
@@ -244,6 +244,11 @@ char * unescapeString(char * str) {
 	char *new_buffer;
 	int new_len = 0;
 	int len = strlen(str);
+
+	//to ignore backslashes at the end of a string
+	if (str[len-1] == '\\') {
+		len = len - 1;
+	}
 	char * buffer = calloc(sizeof(char), len+1);
 	buffer[len]='\0';
 
@@ -275,41 +280,25 @@ char * unescapeString(char * str) {
 					curr = '\a';
 					break;
 				case '\\' :
+					curr = '\\';
+					break;
+				case '"' :
+					curr = '"';
+					break;
 				
-					/*i--;*/
-					curr = '\\';
-					break;
-				case '\0':
+				// case '\0': will never happen 
+				// because we ignore trailing backslashes
 
-					curr = '\\';
-					break;
 				default:
-				{
-					curr = next;	
-					/*int j;*/
-
-					/*i--;*/
-					/*curr = '\0';*/
-					
-/*					printf("Initial string: %s\n",str);*/
-					
-					/*
-					for(j = i; j < len; j++)
-					{
-						str[j] = str[j+1];
-					}
-					*/	
-/*					printf("Final String: %s\n\n",str);	*/
-					
+					curr = next;						
 					break;
-					
-				}
 			}
 
 		}
 		buffer[new_len] = curr;
 		new_len++;
 	}
+	buffer[len]='\0';
 	new_buffer = calloc(sizeof(char), new_len+1);
 	strncpy ( new_buffer, buffer, new_len );
 	free(buffer);
@@ -329,12 +318,15 @@ int main(int argc, char **argv) {
 	TokenizerT *tk;	
 	char *token;
 
-
 	DEBUG_PRINTLN_F("%d", argc);
 	if (argc != 3) {
 		printf("%s\n", "** Invalid Arguments: `$ prog <delim> <string>`");
 		exit(1);
 	}
+
+	DEBUG_PRINTLN_F("%s", argv[2]);
+	DEBUG_PRINTLN_F("%s", unescapeString(argv[2]));
+
 	tk = TKCreate(argv[1], argv[2]);
 	token = TKGetNextToken(tk);
 	while (token != NULL) {
