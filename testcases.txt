@@ -1,0 +1,293 @@
+## Test Cases ##
+Each terminal command has its output on the line directly below it. Each test 
+case and output is sperated by exactly 3 '\n'.
+
+
+./tokenizer \"\"
+** Invalid Arguments: `$ ./tokenizer <delim> <string>`
+
+
+./tokenizer "" ""
+
+
+./tokenizer "" "\\\\"
+
+
+./tokenizer "" "\\\""
+[0x22]
+
+
+./tokenizer "" "hello\\\\"
+hello
+
+
+./tokenizer "a" "Australia"
+Austr
+li
+
+
+./tokenizer "a" "australia"
+ustr
+li
+
+
+./tokenizer "\n" "hello world"
+hello world
+
+
+./tokenizer "\n" "hello\nworld"
+hello
+world
+
+
+./tokenizer "\n" "\nhello world"
+hello world
+
+
+./tokenizer "\n" "hello world\n"
+hello world
+
+
+./tokenizer "" "hello\nworld"
+hello[0x0a]world
+
+
+./tokenizer "\t" "hello world"
+hello world
+
+
+./tokenizer "\t" "hello\tworld"
+hello
+world
+
+
+./tokenizer "\t" "\thello world"
+hello world
+
+
+./tokenizer "\t" "hello world\t"
+hello world
+
+
+./tokenizer "" "hello\tworld"
+hello[0x09]world
+
+
+./tokenizer "\v" "hello world"
+hello world
+
+
+./tokenizer "\v" "hello\vworld"
+hello
+world
+
+
+./tokenizer "\v" "\vhello world"
+hello world
+
+
+./tokenizer "\v" "hello world\v"
+hello world
+
+
+./tokenizer "" "hello\vworld"
+hello[0x0b]world
+
+
+./tokenizer "\b" "hello world"
+hello world
+
+
+./tokenizer "\b" "hello\bworld"
+hello
+world
+
+
+./tokenizer "\b" "\bhello world"
+hello world
+
+
+./tokenizer "\b" "hello world\b"
+hello world
+
+
+./tokenizer "" "hello\bworld"
+hello[0x08]world
+
+
+./tokenizer "\r" "hello world"
+hello world
+
+
+./tokenizer "\r" "hello\rworld"
+hello
+world
+
+
+./tokenizer "\r" "\rhello world"
+hello world
+
+
+./tokenizer "\r" "hello world\r"
+hello world
+
+
+./tokenizer "" "hello\rworld"
+hello[0x0d]world
+
+
+./tokenizer "\a" "hello world"
+hello world
+
+
+./tokenizer "\a" "hello\aworld"
+hello
+world
+
+
+./tokenizer "\a" "\ahello world"
+hello world
+
+
+./tokenizer "\a" "hello world\a"
+hello world
+
+
+./tokenizer "" "hello\aworld"
+hello[0x07]world
+
+
+./tokenizer "\\\\" "hello world"
+hello world
+
+
+./tokenizer "\\\\" "hello\\\\world"
+hello
+world
+
+
+./tokenizer "\\\\" "\\\\hello world"
+hello world
+
+
+./tokenizer "\\\\" "hello world\\\\"
+hello world
+
+
+./tokenizer "" "hello\\\\world"
+hello[0x5c]world
+
+
+./tokenizer "\\\"" "hello world"
+hello world
+
+
+./tokenizer "\\\"" "hello\\\"world"
+hello
+world
+
+
+./tokenizer "\\\"" "\\\"hello world"
+hello world
+
+
+./tokenizer "\\\"" "hello world\\\""
+hello world
+
+
+./tokenizer "" "hello\\\"world"
+hello[0x22]world
+
+
+./tokenizer "\n\t" "\n\thello\n\tworld\n\t"
+hello
+world
+
+
+./tokenizer "\n\t" "hello world\n\t"
+hello world
+
+
+./tokenizer "\n\t" "hello\n\tworld"
+hello
+world
+
+
+./tokenizer "\n\t" "hello\n\tworld\n\t"
+hello
+world
+
+
+./tokenizer "\n\t" "\n\thello world"
+hello world
+
+
+./tokenizer "\n\t" "\n\thello world\n\t"
+hello world
+
+
+./tokenizer "\n\t" "\n\thello\n\tworld"
+hello
+world
+
+
+./tokenizer "\n\t" "\n\thello\n\tworld\n\t"
+hello
+world
+
+
+./tokenizer "aasdfs\n\t" "\n\thello\n\tworld\n\t"
+hello
+worl
+
+
+./tokenizer "\n" "hello world\n\t"
+hello world
+[0x09]
+
+
+./tokenizer "\n" "hello\n\tworld"
+hello
+[0x09]world
+
+
+./tokenizer "\n" "hello\n\tworld\n\t"
+hello
+[0x09]world
+[0x09]
+
+
+./tokenizer "\n" "\n\thello world"
+[0x09]hello world
+
+
+./tokenizer "\n" "\n\thello world\n\t"
+[0x09]hello world
+[0x09]
+
+
+./tokenizer "\n" "\n\thello\n\tworld"
+[0x09]hello
+[0x09]world
+
+
+./tokenizer "\n" "\n\thello\n\tworld\n\t"
+[0x09]hello
+[0x09]world
+[0x09]
+
+
+./tokenizer "" "\Hello\My\Name\Is\Nikhil"
+HelloMyNameIsNikhil
+
+
+./tokenizer "" "\Hello\n\MyName\t\Is\rNikhil"
+Hello[0x0a]MyName[0x09]Is[0x0d]Nikhil
+
+
+./tokenizer "\\\\" "\\\\Hello\\\\My\\\\Name\\\\Is\\\\Nikhil"
+Hello
+My
+Name
+Is
+Nikhil

@@ -38,9 +38,6 @@ char * unescapeString(char * str);
 char * escapeStringWithHex(char * str);
 char * stingWithoutTrailingBackslash(char * str);
 
-//main function
-int main(int argc, char **argv);
-
 
 /*
  * TKCreate creates a new TokenizerT object for a given set of separator
@@ -59,10 +56,10 @@ TokenizerT *TKCreate(char *separators, char *ts) {
 	TokenizerT * tokenizer = malloc(sizeof(TokenizerT));
 	tokenizer->index = 0;
 	tokenizer->delim = unescapeString(separators);
-
+	//mod string is a newly allocated string that needs to be freed
 	char * modString = stingWithoutTrailingBackslash(ts);
-
 	tokenizer->input = unescapeString(modString);
+	free(modString); //no longer needed
 	return tokenizer;
 }
 
@@ -85,7 +82,9 @@ void TKDestroy(TokenizerT *tk) {
 	tk = 0;
 }
 
-
+/*
+returns the index of the next delimitor or non-delimitor based on the value of lookingForDelim
+*/
 int TKNextStringPart(TokenizerT *tk, int index, int lookingForDelim) {
 	char * str = tk->input;
 	int len = strlen(str);
@@ -131,6 +130,8 @@ int charIsEscapeChar(char c) {
 	char * delim = "\n\t\v\b\r\f\a\\\"";
 	return charIsInSet(c, delim);
 }
+
+
 /*
  * converts a char to its hexadecimal string representation
  * returns a char * that needs to be freed
@@ -144,7 +145,9 @@ char * convertCharToHex(char str) {
 	hex[len] = '\0';
 	return hex;
 }
-
+/*
+creates new string with each of the escape characters replaced with "[0x__]"
+*/
 char * escapeStringWithHex(char * str) {
 	/*first, find out the lenghth the new string*/
 	char *new_str;
@@ -342,7 +345,7 @@ int main(int argc, char **argv) {
 
 	DEBUG_PRINTLN_F("%d", argc);
 	if (argc != 3) {
-		printf("%s\n", "** Invalid Arguments: `$ ./tokenizer <delim> <string>`");
+		printf("%s\n", "** Invalid Arguments: `$ ./tokenizer <delims> <string>`");
 		exit(1);
 	}
 
