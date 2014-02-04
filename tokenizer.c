@@ -26,7 +26,7 @@ TokenizerT *TKCreate(char *separators, char *ts);
 void TKDestroy(TokenizerT *tk);
 char *TKGetNextToken(TokenizerT *tk);
 char * convertCharToHex(char str);
-char * unescapeString(char * str);
+char * unescapeString(char * str,TokenizerT *tk);
 int TKCharIsDelim(TokenizerT *tk, char c);
 int TKNextStringPart(TokenizerT *tk, int index, int lookingForDelim);
 int TKNextTokenIndex(TokenizerT *tk);
@@ -50,8 +50,9 @@ int TKFirstNonTokenChar(TokenizerT *tk, int index);
 TokenizerT *TKCreate(char *separators, char *ts) {
 	TokenizerT * tokenizer = malloc(sizeof(TokenizerT));
 	tokenizer->index = 0;
-	tokenizer->input = unescapeString(ts);
-	tokenizer->delim = unescapeString(separators);
+	tokenizer->delim = unescapeString(separators,tokenizer);
+	tokenizer->input = unescapeString(ts,tokenizer);
+
 	return tokenizer;
 }
 
@@ -238,7 +239,7 @@ char *TKGetNextToken(TokenizerT *tk) {
  * and the second is 1 character.
  */
 /*DONE*/
-char * unescapeString(char * str) {
+char * unescapeString(char * str,TokenizerT *tk) {
 	int i;
 	char next;
 	char *new_buffer;
@@ -275,7 +276,6 @@ char * unescapeString(char * str) {
 					curr = '\a';
 					break;
 				case '\\' :
-				
 					/*i--;*/
 					curr = '\\';
 					break;
@@ -285,7 +285,19 @@ char * unescapeString(char * str) {
 					break;
 				default:
 				{
-					curr = next;	
+					if(TKCharIsDelim(tk,'\\'))
+					{
+						curr = '\\';
+						i--;
+						break;
+					}
+					else if(!TKCharIsDelim(tk,'\\'))
+					{
+				
+						curr = next;
+						break;
+					}
+					
 					/*int j;*/
 
 					/*i--;*/
@@ -301,7 +313,6 @@ char * unescapeString(char * str) {
 					*/	
 /*					printf("Final String: %s\n\n",str);	*/
 					
-					break;
 					
 				}
 			}
